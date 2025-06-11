@@ -1,7 +1,7 @@
 # 🤖 Gemini-Powered AI Coding Agent
 This is a command-line AI agent powered by Google's Gemini API. It can autonomously explore, read, execute, and modify code in a secure working directory based on natural language prompts.
 
-Inspired by the excellent [Boot.dev course on building an AI agent in Python](https://www.boot.dev/courses/build-ai-agent-python), this project serves as a fully working example of LLM tool use via function calling.
+Follows the excellent [Boot.dev course on building an AI agent in Python](https://www.boot.dev/courses/build-ai-agent-python), this project serves as a fully working example of LLM tool use via function calling.
 
 ---
 
@@ -115,7 +115,7 @@ python3 main.py "What files exist and what's in main.py?"
 ---
 
 ## 📚 Credits
-This project is based on and expands ideas from the Boot.dev course: Build an AI Agent in Python. Highly recommended for understanding LLM function calling from scratch.
+This project is based on and may expand ideas from the Boot.dev course: Build an AI Agent in Python. Highly recommended for understanding LLM function calling from scratch.
 
 ---
 ## 📜 License
