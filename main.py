@@ -124,27 +124,40 @@ def main():
     generate_content(client, messages, isVerbose)
 
 def generate_content(client, messages, isVerbose):
-    response = client.models.generate_content(
-        model=model_name,
-        contents=messages,
-        config=types.GenerateContentConfig(
-            tools=[available_functions], system_instruction=system_prompt
-        ),
-    )
-    if isVerbose:
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-    if response.function_calls:
-        for function_call_part in response.function_calls:
-            function_call_result = call_function(function_call_part, verbose=isVerbose)
-            if not function_call_result.parts[0].function_response.response:
-                raise RuntimeError(
-                    f"Function {function_call_part.name} returned no response."
+    max_iterations = 20
+    for i in range(max_iterations):
+        if isVerbose:
+            print(f"\nIteration {i + 1}:\n")
+
+        response = client.models.generate_content(
+            model=model_name,
+            contents=messages,
+            config=types.GenerateContentConfig(
+                tools=[available_functions], system_instruction=system_prompt
+            ),
+        )
+
+        if isVerbose:
+            print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+            print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+
+        if response.candidates:
+            for candidate in response.candidates:
+                if candidate.content:
+                    messages.append(candidate.content)
+
+        if response.function_calls:
+            for function_call_part in response.function_calls:
+                function_call_result = call_function(
+                    function_call_part, verbose=isVerbose
                 )
-            elif isVerbose:
-                print(f"-> {function_call_result.parts[0].function_response.response}")
+                messages.append(function_call_result)
+            continue
+        else:
+            print(f"\nFinal response:\n{response.text}")
+            break
     else:
-        print(f"Response:\n{response.text}")
+        print(f"\nReached maximum iterations ({max_iterations}). Exiting.")
 
 def call_function(function_call_part, verbose=False):
     function_name = function_call_part.name
